@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home" v-if="!loading">
     <CountrySelect @get-country="getCountryData" :countries="countries" />
 
     <button
@@ -11,55 +11,58 @@
     </button>
 
     <DataTitle :text="title" :dataDate="dataDate" />
-    
+
     <DataBoxes @get-country="getCountryData" :stats="stats" />
   </div>
+
+  <div v-else>Fetching..</div>
 </template>
 
 <script>
 // @ is an alias to /src
-import { mapGetters } from 'vuex'
-import DataTitle from '@/components/DataTitle'
-import DataBoxes from '@/components/DataBoxes'
-import CountrySelect from '@/components/CountrySelect'
+import DataTitle from "@/components/DataTitle";
+import DataBoxes from "@/components/DataBoxes";
+import CountrySelect from "@/components/CountrySelect";
 
 export default {
-  name: 'Home',
+  name: "Home",
   components: {
     DataTitle,
     DataBoxes,
-    CountrySelect
+    CountrySelect,
   },
-  data(){
+  data() {
     return {
-      title: 'Global',
-      dataDate: '',
-      status: {},
+      title: "Global",
+      dataDate: "",
+      stats: {},
       countries: [],
-    }
+      loading: true,
+    };
   },
   methods: {
     getCountryData(country) {
-      this.stats = country
-      this.title = country.Country
+      this.stats = country;
+      this.title = country.Country;
     },
-    async clearCountryData() {
-      this.title = 'Global'
-      this.stats = this.$store.state.data.data.Global
+    clearCountryData() {
+      this.title = "Global";
+      this.stats = this.fetchingData()
     },
-  },
-  computed: {
-    ...mapGetters({
-      dataCovid19: 'getDataCovid19'
-    })
+    fetchingData(){
+      fetch("https://api.covid19api.com/summary")
+      .then((res) => res.json())
+      .then((res) => {
+        this.dataDate = res.Date;
+        this.stats = res.Global;
+        this.countries = res.Countries;
+
+        this.loading = false;
+      });
+    }
   },
   created() {
-    this.$store.dispatch('fetchData')
-
-    this.dataDate = this.$store.state.data.Date
-    this.stats = this.$store.state.data.data.Global
-    this.countries = this.$store.state.data.data.Countries
-  }
-  
-}
+    this.fetchingData()
+  },
+};
 </script>

@@ -1,5 +1,4 @@
 import { createStore } from 'vuex'
-import axios from 'axios'
 
 export default createStore({
   state: {
@@ -11,13 +10,10 @@ export default createStore({
     }
   },
   actions: {
-    fetchData: async ({commit}) => {
-      try {
-        const res = await axios.get('https://api.covid19api.com/summary')
-        commit('SET_DATA', res)
-      } catch (err) {
-        console.error(err)
-      }
+    fetchData: ({commit}) => {
+      fetch('https://api.covid19api.com/summary')
+        .then(res => res.json())
+        .then(res => commit('SET_DATA', res))
     }
   },
   getters: {
