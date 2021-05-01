@@ -14,12 +14,7 @@
 <script>
 export default {
   name: "CountrySelect",
-  props: ["countries"],
-  data(){
-    return{
-      selected: 0,
-    }
-  },
+  props: ["countries", "selected"],
   methods: {
     onChange(){
       const country = this.countries.find((item) => item.ID === this.selected)

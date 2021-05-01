@@ -1,6 +1,6 @@
 <template>
   <div class="home" v-if="!loading">
-    <CountrySelect @get-country="getCountryData" :countries="countries" />
+    <CountrySelect @get-country="getCountryData" :countries="countries" :selected=0 />
 
     <button
       @click="clearCountryData"
